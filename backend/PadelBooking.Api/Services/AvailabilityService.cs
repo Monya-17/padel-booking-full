@@ -61,11 +61,14 @@ public class AvailabilityService : IAvailabilityService
 
     public async Task<List<int>> GetFreeCourtIdsAsync(DateOnly date, TimeSpan hour)
     {
-        var courts = await _db.Courts
+        var activeCourts = await _db.Courts
             .Include(c => c.Closures)
             .Where(c => c.IsActive)
-            .Where(c => c.OpeningTime <= hour && c.ClosingTime > hour)
             .ToListAsync();
+
+        var courts = activeCourts
+            .Where(c => c.OpeningTime <= hour && c.ClosingTime > hour)
+            .ToList();
 
         var bookedCourtIds = await _db.BookingSlots
             .Where(s => s.Date == date && s.StartTime == hour)
