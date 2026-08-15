@@ -61,10 +61,10 @@ export default function ClientBooking() {
   }, [selected])
 
   async function submit() {
-    if (!phone.trim()) {
-      showToast('رقم الهاتف مطلوب', 'error')
-      return
-    }
+    if (!/^\d{8}$/.test(phone.trim())) {
+        showToast('رقم الهاتف يجب أن يكون 8 أرقام بالضبط', 'error')
+        return
+      }
     if (selected.length === 0) {
       showToast('اختر ساعة واحدة على الأقل', 'error')
       return
@@ -183,7 +183,14 @@ export default function ClientBooking() {
           <div className="section-title">بياناتك</div>
           <div className="field">
             <label>رقم الهاتف *</label>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9XXXXXXX" />
+            <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                placeholder="9XXXXXXX"
+                maxLength={8}
+                inputMode="numeric"
+              />
           </div>
           <div className="field">
             <label>الاسم (اختياري)</label>
