@@ -74,8 +74,9 @@ public class BookingService : IBookingService
         }
 
         // Pricing is based on total hour count in this single transaction.
-        var totalPrice = await _pricing.CalculateTotalPriceAsync(courtId: null, totalHours: allocatedSlots.Count);
-
+        var fallbackCourtId = allocatedSlots.First().CourtId;
+        var totalPrice = await _pricing.CalculateTotalPriceAsync(courtId: fallbackCourtId, totalHours: allocatedSlots.Count);
+        
         var booking = new Booking
         {
             PhoneNumber = request.PhoneNumber,
